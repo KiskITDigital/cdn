@@ -27,7 +27,7 @@ func (h *Handler) FileIDGet(ctx context.Context, params api.FileIDGetParams) (ap
 
 	fmt.Printf("%#v\n", info.UserMetadata)
 
-	isPrivate, err := strconv.ParseBool(info.UserMetadata["Private"])
+	isPrivate, err := strconv.ParseBool(info.UserMetadata[models.MetaPrivateKey])
 	if err != nil {
 		return nil, fmt.Errorf("convert private tag: %w", err)
 	}
@@ -38,7 +38,7 @@ func (h *Handler) FileIDGet(ctx context.Context, params api.FileIDGetParams) (ap
 		}, nil
 	}
 
-	userIDString := info.UserMetadata["User_id"]
+	userIDString := info.UserMetadata[models.MetaUserID]
 
 	userID, err := strconv.Atoi(userIDString)
 	if err != nil {

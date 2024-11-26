@@ -11,3 +11,8 @@ const (
 	UserRoleAdmin
 	UserRoleSuperAdmin
 )
+
+const (
+	MetaPrivateKey = "Private"
+	MetaUserID     = "User-Id"
+)
