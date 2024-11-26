@@ -4,6 +4,7 @@ package api
 
 import (
 	"io"
+	"time"
 
 	"github.com/go-faster/jx"
 
@@ -101,6 +102,7 @@ func (s *ErrorStatusCode) SetResponse(val WrappedError) {
 }
 
 func (*ErrorStatusCode) fileIDGetRes()  {}
+func (*ErrorStatusCode) fileIDHeadRes() {}
 func (*ErrorStatusCode) uploadPostRes() {}
 
 type FileIDGetOK struct {
@@ -118,6 +120,45 @@ func (s FileIDGetOK) Read(p []byte) (n int, err error) {
 }
 
 func (*FileIDGetOK) fileIDGetRes() {}
+
+// FileIDHeadOK is response for FileIDHead operation.
+type FileIDHeadOK struct {
+	ContentLength int
+	LastModified  time.Time
+	XContentType  string
+}
+
+// GetContentLength returns the value of ContentLength.
+func (s *FileIDHeadOK) GetContentLength() int {
+	return s.ContentLength
+}
+
+// GetLastModified returns the value of LastModified.
+func (s *FileIDHeadOK) GetLastModified() time.Time {
+	return s.LastModified
+}
+
+// GetXContentType returns the value of XContentType.
+func (s *FileIDHeadOK) GetXContentType() string {
+	return s.XContentType
+}
+
+// SetContentLength sets the value of ContentLength.
+func (s *FileIDHeadOK) SetContentLength(val int) {
+	s.ContentLength = val
+}
+
+// SetLastModified sets the value of LastModified.
+func (s *FileIDHeadOK) SetLastModified(val time.Time) {
+	s.LastModified = val
+}
+
+// SetXContentType sets the value of XContentType.
+func (s *FileIDHeadOK) SetXContentType(val string) {
+	s.XContentType = val
+}
+
+func (*FileIDHeadOK) fileIDHeadRes() {}
 
 // NewOptBool returns new OptBool with value set to v.
 func NewOptBool(v bool) OptBool {

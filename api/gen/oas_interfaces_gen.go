@@ -5,6 +5,10 @@ type FileIDGetRes interface {
 	fileIDGetRes()
 }
 
+type FileIDHeadRes interface {
+	fileIDHeadRes()
+}
+
 type UploadPostRes interface {
 	uploadPostRes()
 }

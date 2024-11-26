@@ -14,6 +14,13 @@ type Handler interface {
 	//
 	// GET /file/{id}
 	FileIDGet(ctx context.Context, params FileIDGetParams) (FileIDGetRes, error)
+	// FileIDHead implements HEAD /file/{id} operation.
+	//
+	// Получает мету файла из MinIO по уникальному
+	// идентификатору.
+	//
+	// HEAD /file/{id}
+	FileIDHead(ctx context.Context, params FileIDHeadParams) (FileIDHeadRes, error)
 	// UploadPost implements POST /upload operation.
 	//
 	// Загружает файл в MinIO с использованием JWT токена для

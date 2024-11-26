@@ -81,8 +81,12 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						s.handleFileIDGetRequest([1]string{
 							args[0],
 						}, elemIsEscaped, w, r)
+					case "HEAD":
+						s.handleFileIDHeadRequest([1]string{
+							args[0],
+						}, elemIsEscaped, w, r)
 					default:
-						s.notAllowed(w, r, "GET")
+						s.notAllowed(w, r, "GET,HEAD")
 					}
 
 					return
@@ -224,6 +228,14 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					case "GET":
 						r.name = "FileIDGet"
 						r.summary = "Получить файл"
+						r.operationID = ""
+						r.pathPattern = "/file/{id}"
+						r.args = args
+						r.count = 1
+						return r, true
+					case "HEAD":
+						r.name = "FileIDHead"
+						r.summary = "Получить информацию о файле"
 						r.operationID = ""
 						r.pathPattern = "/file/{id}"
 						r.args = args
