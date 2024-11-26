@@ -21,6 +21,7 @@ type Error interface {
 
 type File interface {
 	FileIDGet(ctx context.Context, params api.FileIDGetParams) (api.FileIDGetRes, error)
+	FileIDHead(ctx context.Context, params api.FileIDHeadParams) (api.FileIDHeadRes, error)
 	UploadPost(ctx context.Context, req *api.UploadPostReq, params api.UploadPostParams) (api.UploadPostRes, error)
 }
 

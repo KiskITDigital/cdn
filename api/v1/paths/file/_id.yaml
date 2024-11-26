@@ -21,3 +21,38 @@ get:
             format: binary
     default:
       $ref: "../../responses/Error.yaml"
+head:
+  summary: Получить информацию о файле
+  description: Получает мету файла из MinIO по уникальному идентификатору.
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: Уникальный идентификатор файла
+      schema:
+        type: string
+  security:
+    - bearerAuth: []
+    - {}
+  responses:
+    '200':
+      description: Successful response with file metadata
+      headers:
+        X-Content-Type:
+          required: true
+          schema:
+            type: string
+          description: The media type of the file.
+        Content-Length:
+          required: true
+          schema:
+            type: integer
+          description: The size of the file in bytes.
+        Last-Modified:
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: The last modified date of the file.
+    default:
+      $ref: "../../responses/Error.yaml"

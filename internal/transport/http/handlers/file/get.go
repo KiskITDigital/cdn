@@ -3,6 +3,8 @@ package file
 import (
 	"context"
 	"fmt"
+	"mime"
+	"path/filepath"
 	"strconv"
 
 	api "gitlab.ubrato.ru/ubrato/cdn/api/gen"
@@ -52,5 +54,20 @@ func (h *Handler) FileIDGet(ctx context.Context, params api.FileIDGetParams) (ap
 
 	return &api.FileIDGetOK{
 		Data: object,
+	}, nil
+}
+
+func (h *Handler) FileIDHead(ctx context.Context, params api.FileIDHeadParams) (api.FileIDHeadRes, error) {
+	_, info, err := h.s3Svc.GetFile(ctx, params.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	ext := filepath.Ext(info.Key)
+
+	return &api.FileIDHeadOK{
+		XContentType:  mime.TypeByExtension(ext),
+		ContentLength: int(info.Size),
+		LastModified:  info.LastModified,
 	}, nil
 }

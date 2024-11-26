@@ -11,7 +11,9 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/go-faster/jx"
 
+	"github.com/ogen-go/ogen/conv"
 	"github.com/ogen-go/ogen/ogenerrors"
+	"github.com/ogen-go/ogen/uri"
 	"github.com/ogen-go/ogen/validate"
 )
 
@@ -39,6 +41,155 @@ func decodeFileIDGetResponse(resp *http.Response) (res FileIDGetRes, _ error) {
 	}
 	// Default response.
 	res, err := func() (res FileIDGetRes, err error) {
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "application/json":
+			buf, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return res, err
+			}
+			d := jx.DecodeBytes(buf)
+
+			var response WrappedError
+			if err := func() error {
+				if err := response.Decode(d); err != nil {
+					return err
+				}
+				if err := d.Skip(); err != io.EOF {
+					return errors.New("unexpected trailing data")
+				}
+				return nil
+			}(); err != nil {
+				err = &ogenerrors.DecodeBodyError{
+					ContentType: ct,
+					Body:        buf,
+					Err:         err,
+				}
+				return res, err
+			}
+			return &ErrorStatusCode{
+				StatusCode: resp.StatusCode,
+				Response:   response,
+			}, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
+	}()
+	if err != nil {
+		return res, errors.Wrapf(err, "default (code %d)", resp.StatusCode)
+	}
+	return res, nil
+}
+
+func decodeFileIDHeadResponse(resp *http.Response) (res FileIDHeadRes, _ error) {
+	switch resp.StatusCode {
+	case 200:
+		// Code 200.
+		var wrapper FileIDHeadOK
+		h := uri.NewHeaderDecoder(resp.Header)
+		// Parse "Content-Length" header.
+		{
+			cfg := uri.HeaderParameterDecodingConfig{
+				Name:    "Content-Length",
+				Explode: false,
+			}
+			if err := func() error {
+				if err := h.HasParam(cfg); err == nil {
+					if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToInt(val)
+						if err != nil {
+							return err
+						}
+
+						wrapper.ContentLength = c
+						return nil
+					}); err != nil {
+						return err
+					}
+				} else {
+					return validate.ErrFieldRequired
+				}
+				return nil
+			}(); err != nil {
+				return res, errors.Wrap(err, "parse Content-Length header")
+			}
+		}
+		// Parse "Last-Modified" header.
+		{
+			cfg := uri.HeaderParameterDecodingConfig{
+				Name:    "Last-Modified",
+				Explode: false,
+			}
+			if err := func() error {
+				if err := h.HasParam(cfg); err == nil {
+					if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToDateTime(val)
+						if err != nil {
+							return err
+						}
+
+						wrapper.LastModified = c
+						return nil
+					}); err != nil {
+						return err
+					}
+				} else {
+					return validate.ErrFieldRequired
+				}
+				return nil
+			}(); err != nil {
+				return res, errors.Wrap(err, "parse Last-Modified header")
+			}
+		}
+		// Parse "X-Content-Type" header.
+		{
+			cfg := uri.HeaderParameterDecodingConfig{
+				Name:    "X-Content-Type",
+				Explode: false,
+			}
+			if err := func() error {
+				if err := h.HasParam(cfg); err == nil {
+					if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+						val, err := d.DecodeValue()
+						if err != nil {
+							return err
+						}
+
+						c, err := conv.ToString(val)
+						if err != nil {
+							return err
+						}
+
+						wrapper.XContentType = c
+						return nil
+					}); err != nil {
+						return err
+					}
+				} else {
+					return validate.ErrFieldRequired
+				}
+				return nil
+			}(); err != nil {
+				return res, errors.Wrap(err, "parse X-Content-Type header")
+			}
+		}
+		return &wrapper, nil
+	}
+	// Default response.
+	res, err := func() (res FileIDHeadRes, err error) {
 		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
 		if err != nil {
 			return res, errors.Wrap(err, "parse media type")

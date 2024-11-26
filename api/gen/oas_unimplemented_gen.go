@@ -22,6 +22,16 @@ func (UnimplementedHandler) FileIDGet(ctx context.Context, params FileIDGetParam
 	return r, ht.ErrNotImplemented
 }
 
+// FileIDHead implements HEAD /file/{id} operation.
+//
+// Получает мету файла из MinIO по уникальному
+// идентификатору.
+//
+// HEAD /file/{id}
+func (UnimplementedHandler) FileIDHead(ctx context.Context, params FileIDHeadParams) (r FileIDHeadRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // UploadPost implements POST /upload operation.
 //
 // Загружает файл в MinIO с использованием JWT токена для
