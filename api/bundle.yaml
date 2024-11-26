@@ -1,0 +1,113 @@
+openapi: 3.0.0
+info:
+  title: Ubrato S3 bucket
+  description: API для загрузки и получения файлов с использованием MinIO и JWT аутентификации.
+  version: 1.0.0
+servers:
+  - url: /
+paths:
+  /upload:
+    post:
+      summary: Загрузить файл
+      description: Загружает файл в MinIO с использованием JWT токена для аутентификации.
+      parameters:
+        - name: is_private
+          in: query
+          description: Загрузить файл в приватном режиме
+          schema:
+            type: boolean
+            default: false
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Файл успешно загружен
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                      - key
+                    properties:
+                      key:
+                        type: string
+        default:
+          $ref: '#/components/responses/Error'
+  /file/{id}:
+    get:
+      summary: Получить файл
+      description: Получает файл из MinIO по уникальному идентификатору.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Уникальный идентификатор файла
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+        - {}
+      responses:
+        '200':
+          description: Файл успешно получен
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        default:
+          $ref: '#/components/responses/Error'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+        - details
+      properties:
+        code:
+          type: string
+          description: application-specific error code
+          example: ERR_INTERNAL
+        message:
+          type: string
+          description: error message
+          example: invalid email
+        details:
+          type: object
+          additionalProperties: true
+    WrappedError:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          $ref: '#/components/schemas/Error'
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WrappedError'

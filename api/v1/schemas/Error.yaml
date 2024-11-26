@@ -1,0 +1,17 @@
+type: object
+required:
+  - code
+  - message
+  - details
+properties:
+  code:
+    type: string
+    description: application-specific error code
+    example: ERR_INTERNAL
+  message:
+    type: string
+    description: error message
+    example: invalid email
+  details:
+    type: object
+    additionalProperties: true

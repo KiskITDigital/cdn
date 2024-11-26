@@ -1,0 +1,19 @@
+openapi: 3.0.0
+info:
+  title: Ubrato S3 bucket
+  description: API для загрузки и получения файлов с использованием MinIO и JWT аутентификации.
+  version: 1.0.0
+servers:
+  - url: /
+paths:
+  /upload:
+    $ref: "v1/paths/upload/_index.yaml"
+  /file/{id}:
+    $ref: "v1/paths/file/_id.yaml"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

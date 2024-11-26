@@ -1,0 +1,61 @@
+image: docker:latest
+services:
+  - docker:dind
+
+stages:
+  - build
+  - deploy
+  - release
+
+before_script:
+  - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+  - eval $(ssh-agent -s)
+  - chmod 400 "$SSH_PRIVATE_KEY"
+  - ssh-add "$SSH_PRIVATE_KEY"
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - cp $KNOWN_HOSTS ~/.ssh/known_hosts
+
+.docker-build:
+  stage: build
+  script:
+    - docker login -u $CI_REGISTRY_USER -p "$CI_JOB_TOKEN" $CI_REGISTRY
+    - docker build -f ./deployments/Dockerfile --build-arg GIT_VERSION=$CI_COMMIT_SHORT_SHA --pull -t "$CI_REGISTRY_IMAGE:$IMAGE_TAG" .
+    - docker push "$CI_REGISTRY_IMAGE:$IMAGE_TAG"
+
+prod-build:
+  only: [master]
+  extends: .docker-build
+  variables:
+    IMAGE_TAG: "latest"
+
+stage-build:
+  only: [stage]
+  extends: .docker-build
+  variables:
+    IMAGE_TAG: "stage"
+
+tags-build:
+  only: [tags]
+  extends: .docker-build
+  variables:
+    IMAGE_TAG: "$CI_COMMIT_TAG"
+
+.prod-deploy:
+  stage: deploy
+  script:
+    - ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST -p $REMOTE_PORT "docker service update --with-registry-auth --image $CI_REGISTRY_IMAGE:$IMAGE_TAG $SERVICE"
+
+prod-deploy:
+  only: [master]
+  extends: .prod-deploy
+  variables:
+    IMAGE_TAG: "latest"
+    SERVICE: stack_$CI_PROJECT_NAME
+
+stage-deploy:
+  only: [stage]
+  extends: .prod-deploy
+  variables:
+    IMAGE_TAG: "stage"
+    SERVICE: stage_$CI_PROJECT_NAME

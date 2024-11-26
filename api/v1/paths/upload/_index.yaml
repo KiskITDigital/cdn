@@ -1,0 +1,41 @@
+post:
+  summary: Загрузить файл
+  description: Загружает файл в MinIO с использованием JWT токена для аутентификации.
+  parameters:
+    - name: is_private
+      in: query
+      description: Загрузить файл в приватном режиме
+      schema:
+        type: boolean
+        default: false
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          properties:
+            file:
+              type: string
+              format: binary
+  responses:
+    '201':
+      description: Файл успешно загружен
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - data
+            properties:
+              data:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+    default:
+      $ref: "../../responses/Error.yaml"
