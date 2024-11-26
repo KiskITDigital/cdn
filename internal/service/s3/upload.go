@@ -16,8 +16,8 @@ func (s *Service) UploadFile(ctx context.Context, file models.File, isPrivate bo
 
 	info, err := s.minio.PutObject(context.Background(), models.BucketName, objectName, file.Data, -1, minio.PutObjectOptions{
 		UserMetadata: map[string]string{
-			"User_id": strconv.FormatInt(int64(contextor.GetUserID(ctx)), 10),
-			"Private": strconv.FormatBool(isPrivate),
+			models.MetaUserID:     strconv.FormatInt(int64(contextor.GetUserID(ctx)), 10),
+			models.MetaPrivateKey: strconv.FormatBool(isPrivate),
 		},
 	})
 	if err != nil {
