@@ -18,13 +18,53 @@ import (
 
 func encodeFileIDGetResponse(response FileIDGetRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *FileIDGetOK:
+	case *FileIDGetOKHeaders:
 		w.Header().Set("Content-Type", "application/octet-stream")
+		// Encoding response headers.
+		{
+			h := uri.NewHeaderEncoder(w.Header())
+			// Encode "Content-Length" header.
+			{
+				cfg := uri.HeaderParameterEncodingConfig{
+					Name:    "Content-Length",
+					Explode: false,
+				}
+				if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+					return e.EncodeValue(conv.IntToString(response.ContentLength))
+				}); err != nil {
+					return errors.Wrap(err, "encode Content-Length header")
+				}
+			}
+			// Encode "Content-Modified" header.
+			{
+				cfg := uri.HeaderParameterEncodingConfig{
+					Name:    "Content-Modified",
+					Explode: false,
+				}
+				if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+					return e.EncodeValue(conv.DateTimeToString(response.ContentModified))
+				}); err != nil {
+					return errors.Wrap(err, "encode Content-Modified header")
+				}
+			}
+			// Encode "X-File-Type" header.
+			{
+				cfg := uri.HeaderParameterEncodingConfig{
+					Name:    "X-File-Type",
+					Explode: false,
+				}
+				if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+					return e.EncodeValue(conv.StringToString(response.XFileType))
+				}); err != nil {
+					return errors.Wrap(err, "encode X-File-Type header")
+				}
+			}
+		}
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
 
 		writer := w
-		if _, err := io.Copy(writer, response); err != nil {
+		if _, err := io.Copy(writer, response.Response); err != nil {
 			return errors.Wrap(err, "write")
 		}
 
@@ -78,28 +118,16 @@ func encodeFileIDHeadResponse(response FileIDHeadRes, w http.ResponseWriter, spa
 					return errors.Wrap(err, "encode Content-Length header")
 				}
 			}
-			// Encode "X-File-Length" header.
+			// Encode "Content-Modified" header.
 			{
 				cfg := uri.HeaderParameterEncodingConfig{
-					Name:    "X-File-Length",
+					Name:    "Content-Modified",
 					Explode: false,
 				}
 				if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
-					return e.EncodeValue(conv.IntToString(response.XFileLength))
+					return e.EncodeValue(conv.DateTimeToString(response.ContentModified))
 				}); err != nil {
-					return errors.Wrap(err, "encode X-File-Length header")
-				}
-			}
-			// Encode "X-File-Modified" header.
-			{
-				cfg := uri.HeaderParameterEncodingConfig{
-					Name:    "X-File-Modified",
-					Explode: false,
-				}
-				if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
-					return e.EncodeValue(conv.DateTimeToString(response.XFileModified))
-				}); err != nil {
-					return errors.Wrap(err, "encode X-File-Modified header")
+					return errors.Wrap(err, "encode Content-Modified header")
 				}
 			}
 			// Encode "X-File-Type" header.

@@ -14,6 +14,23 @@ get:
   responses:
     '200':
       description: Файл успешно получен
+      headers:
+        X-File-Type:
+          required: true
+          schema:
+            type: string
+          description: The media type of the file.
+        Content-Length:
+          required: true
+          schema:
+            type: integer
+          description: The size of the file in bytes.
+        Content-Modified:
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: The last modified date of the file.
       content:
         application/octet-stream:
           schema:
@@ -43,12 +60,12 @@ head:
           schema:
             type: string
           description: The media type of the file.
-        X-File-Length:
+        Content-Length:
           required: true
           schema:
             type: integer
           description: The size of the file in bytes.
-        X-File-Modified:
+        Content-Modified:
           required: true
           schema:
             type: string

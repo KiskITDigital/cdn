@@ -28,9 +28,16 @@ func (h *Handler) FileIDGet(ctx context.Context, params api.FileIDGetParams) (ap
 		return nil, fmt.Errorf("convert private tag: %w", err)
 	}
 
+	ext := filepath.Ext(info.Key)
+
 	if !isPrivate {
-		return &api.FileIDGetOK{
-			Data: object,
+		return &api.FileIDGetOKHeaders{
+			ContentLength:   int(info.Size),
+			ContentModified: info.LastModified,
+			XFileType:       mime.TypeByExtension(ext),
+			Response: api.FileIDGetOK{
+				Data: object,
+			},
 		}, nil
 	}
 
@@ -48,8 +55,13 @@ func (h *Handler) FileIDGet(ctx context.Context, params api.FileIDGetParams) (ap
 		return nil, cerr.Wrap(cerr.ErrPermission, cerr.CodeNotPermitted, "you don't have authorization to retrieve this file", nil)
 	}
 
-	return &api.FileIDGetOK{
-		Data: object,
+	return &api.FileIDGetOKHeaders{
+		ContentLength:   int(info.Size),
+		ContentModified: info.LastModified,
+		XFileType:       mime.TypeByExtension(ext),
+		Response: api.FileIDGetOK{
+			Data: object,
+		},
 	}, nil
 }
 
@@ -62,8 +74,8 @@ func (h *Handler) FileIDHead(ctx context.Context, params api.FileIDHeadParams) (
 	ext := filepath.Ext(info.Key)
 
 	return &api.FileIDHeadOK{
-		XFileType:     mime.TypeByExtension(ext),
-		XFileLength:   int(info.Size),
-		XFileModified: info.LastModified,
+		ContentLength:   int(info.Size),
+		ContentModified: info.LastModified,
+		XFileType:       mime.TypeByExtension(ext),
 	}, nil
 }

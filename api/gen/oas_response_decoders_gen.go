@@ -34,7 +34,106 @@ func decodeFileIDGetResponse(resp *http.Response) (res FileIDGetRes, _ error) {
 			}
 
 			response := FileIDGetOK{Data: bytes.NewReader(b)}
-			return &response, nil
+			var wrapper FileIDGetOKHeaders
+			wrapper.Response = response
+			h := uri.NewHeaderDecoder(resp.Header)
+			// Parse "Content-Length" header.
+			{
+				cfg := uri.HeaderParameterDecodingConfig{
+					Name:    "Content-Length",
+					Explode: false,
+				}
+				if err := func() error {
+					if err := h.HasParam(cfg); err == nil {
+						if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+							val, err := d.DecodeValue()
+							if err != nil {
+								return err
+							}
+
+							c, err := conv.ToInt(val)
+							if err != nil {
+								return err
+							}
+
+							wrapper.ContentLength = c
+							return nil
+						}); err != nil {
+							return err
+						}
+					} else {
+						return validate.ErrFieldRequired
+					}
+					return nil
+				}(); err != nil {
+					return res, errors.Wrap(err, "parse Content-Length header")
+				}
+			}
+			// Parse "Content-Modified" header.
+			{
+				cfg := uri.HeaderParameterDecodingConfig{
+					Name:    "Content-Modified",
+					Explode: false,
+				}
+				if err := func() error {
+					if err := h.HasParam(cfg); err == nil {
+						if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+							val, err := d.DecodeValue()
+							if err != nil {
+								return err
+							}
+
+							c, err := conv.ToDateTime(val)
+							if err != nil {
+								return err
+							}
+
+							wrapper.ContentModified = c
+							return nil
+						}); err != nil {
+							return err
+						}
+					} else {
+						return validate.ErrFieldRequired
+					}
+					return nil
+				}(); err != nil {
+					return res, errors.Wrap(err, "parse Content-Modified header")
+				}
+			}
+			// Parse "X-File-Type" header.
+			{
+				cfg := uri.HeaderParameterDecodingConfig{
+					Name:    "X-File-Type",
+					Explode: false,
+				}
+				if err := func() error {
+					if err := h.HasParam(cfg); err == nil {
+						if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+							val, err := d.DecodeValue()
+							if err != nil {
+								return err
+							}
+
+							c, err := conv.ToString(val)
+							if err != nil {
+								return err
+							}
+
+							wrapper.XFileType = c
+							return nil
+						}); err != nil {
+							return err
+						}
+					} else {
+						return validate.ErrFieldRequired
+					}
+					return nil
+				}(); err != nil {
+					return res, errors.Wrap(err, "parse X-File-Type header")
+				}
+			}
+			return &wrapper, nil
 		default:
 			return res, validate.InvalidContentType(ct)
 		}
@@ -122,42 +221,10 @@ func decodeFileIDHeadResponse(resp *http.Response) (res FileIDHeadRes, _ error) 
 				return res, errors.Wrap(err, "parse Content-Length header")
 			}
 		}
-		// Parse "X-File-Length" header.
+		// Parse "Content-Modified" header.
 		{
 			cfg := uri.HeaderParameterDecodingConfig{
-				Name:    "X-File-Length",
-				Explode: false,
-			}
-			if err := func() error {
-				if err := h.HasParam(cfg); err == nil {
-					if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
-						val, err := d.DecodeValue()
-						if err != nil {
-							return err
-						}
-
-						c, err := conv.ToInt(val)
-						if err != nil {
-							return err
-						}
-
-						wrapper.XFileLength = c
-						return nil
-					}); err != nil {
-						return err
-					}
-				} else {
-					return validate.ErrFieldRequired
-				}
-				return nil
-			}(); err != nil {
-				return res, errors.Wrap(err, "parse X-File-Length header")
-			}
-		}
-		// Parse "X-File-Modified" header.
-		{
-			cfg := uri.HeaderParameterDecodingConfig{
-				Name:    "X-File-Modified",
+				Name:    "Content-Modified",
 				Explode: false,
 			}
 			if err := func() error {
@@ -173,7 +240,7 @@ func decodeFileIDHeadResponse(resp *http.Response) (res FileIDHeadRes, _ error) 
 							return err
 						}
 
-						wrapper.XFileModified = c
+						wrapper.ContentModified = c
 						return nil
 					}); err != nil {
 						return err
@@ -183,7 +250,7 @@ func decodeFileIDHeadResponse(resp *http.Response) (res FileIDHeadRes, _ error) 
 				}
 				return nil
 			}(); err != nil {
-				return res, errors.Wrap(err, "parse X-File-Modified header")
+				return res, errors.Wrap(err, "parse Content-Modified header")
 			}
 		}
 		// Parse "X-File-Type" header.

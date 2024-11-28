@@ -119,14 +119,61 @@ func (s FileIDGetOK) Read(p []byte) (n int, err error) {
 	return s.Data.Read(p)
 }
 
-func (*FileIDGetOK) fileIDGetRes() {}
+// FileIDGetOKHeaders wraps FileIDGetOK with response headers.
+type FileIDGetOKHeaders struct {
+	ContentLength   int
+	ContentModified time.Time
+	XFileType       string
+	Response        FileIDGetOK
+}
+
+// GetContentLength returns the value of ContentLength.
+func (s *FileIDGetOKHeaders) GetContentLength() int {
+	return s.ContentLength
+}
+
+// GetContentModified returns the value of ContentModified.
+func (s *FileIDGetOKHeaders) GetContentModified() time.Time {
+	return s.ContentModified
+}
+
+// GetXFileType returns the value of XFileType.
+func (s *FileIDGetOKHeaders) GetXFileType() string {
+	return s.XFileType
+}
+
+// GetResponse returns the value of Response.
+func (s *FileIDGetOKHeaders) GetResponse() FileIDGetOK {
+	return s.Response
+}
+
+// SetContentLength sets the value of ContentLength.
+func (s *FileIDGetOKHeaders) SetContentLength(val int) {
+	s.ContentLength = val
+}
+
+// SetContentModified sets the value of ContentModified.
+func (s *FileIDGetOKHeaders) SetContentModified(val time.Time) {
+	s.ContentModified = val
+}
+
+// SetXFileType sets the value of XFileType.
+func (s *FileIDGetOKHeaders) SetXFileType(val string) {
+	s.XFileType = val
+}
+
+// SetResponse sets the value of Response.
+func (s *FileIDGetOKHeaders) SetResponse(val FileIDGetOK) {
+	s.Response = val
+}
+
+func (*FileIDGetOKHeaders) fileIDGetRes() {}
 
 // FileIDHeadOK is response for FileIDHead operation.
 type FileIDHeadOK struct {
-	ContentLength int
-	XFileLength   int
-	XFileModified time.Time
-	XFileType     string
+	ContentLength   int
+	ContentModified time.Time
+	XFileType       string
 }
 
 // GetContentLength returns the value of ContentLength.
@@ -134,14 +181,9 @@ func (s *FileIDHeadOK) GetContentLength() int {
 	return s.ContentLength
 }
 
-// GetXFileLength returns the value of XFileLength.
-func (s *FileIDHeadOK) GetXFileLength() int {
-	return s.XFileLength
-}
-
-// GetXFileModified returns the value of XFileModified.
-func (s *FileIDHeadOK) GetXFileModified() time.Time {
-	return s.XFileModified
+// GetContentModified returns the value of ContentModified.
+func (s *FileIDHeadOK) GetContentModified() time.Time {
+	return s.ContentModified
 }
 
 // GetXFileType returns the value of XFileType.
@@ -154,14 +196,9 @@ func (s *FileIDHeadOK) SetContentLength(val int) {
 	s.ContentLength = val
 }
 
-// SetXFileLength sets the value of XFileLength.
-func (s *FileIDHeadOK) SetXFileLength(val int) {
-	s.XFileLength = val
-}
-
-// SetXFileModified sets the value of XFileModified.
-func (s *FileIDHeadOK) SetXFileModified(val time.Time) {
-	s.XFileModified = val
+// SetContentModified sets the value of ContentModified.
+func (s *FileIDHeadOK) SetContentModified(val time.Time) {
+	s.ContentModified = val
 }
 
 // SetXFileType sets the value of XFileType.
