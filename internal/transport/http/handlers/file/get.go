@@ -62,8 +62,8 @@ func (h *Handler) FileIDHead(ctx context.Context, params api.FileIDHeadParams) (
 	ext := filepath.Ext(info.Key)
 
 	return &api.FileIDHeadOK{
-		XContentType:  mime.TypeByExtension(ext),
-		ContentLength: int(info.Size),
-		LastModified:  info.LastModified,
+		XFileType:     mime.TypeByExtension(ext),
+		XFileLength:   int(info.Size),
+		XFileModified: info.LastModified,
 	}, nil
 }

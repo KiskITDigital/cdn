@@ -124,8 +124,9 @@ func (*FileIDGetOK) fileIDGetRes() {}
 // FileIDHeadOK is response for FileIDHead operation.
 type FileIDHeadOK struct {
 	ContentLength int
-	LastModified  time.Time
-	XContentType  string
+	XFileLength   int
+	XFileModified time.Time
+	XFileType     string
 }
 
 // GetContentLength returns the value of ContentLength.
@@ -133,14 +134,19 @@ func (s *FileIDHeadOK) GetContentLength() int {
 	return s.ContentLength
 }
 
-// GetLastModified returns the value of LastModified.
-func (s *FileIDHeadOK) GetLastModified() time.Time {
-	return s.LastModified
+// GetXFileLength returns the value of XFileLength.
+func (s *FileIDHeadOK) GetXFileLength() int {
+	return s.XFileLength
 }
 
-// GetXContentType returns the value of XContentType.
-func (s *FileIDHeadOK) GetXContentType() string {
-	return s.XContentType
+// GetXFileModified returns the value of XFileModified.
+func (s *FileIDHeadOK) GetXFileModified() time.Time {
+	return s.XFileModified
+}
+
+// GetXFileType returns the value of XFileType.
+func (s *FileIDHeadOK) GetXFileType() string {
+	return s.XFileType
 }
 
 // SetContentLength sets the value of ContentLength.
@@ -148,14 +154,19 @@ func (s *FileIDHeadOK) SetContentLength(val int) {
 	s.ContentLength = val
 }
 
-// SetLastModified sets the value of LastModified.
-func (s *FileIDHeadOK) SetLastModified(val time.Time) {
-	s.LastModified = val
+// SetXFileLength sets the value of XFileLength.
+func (s *FileIDHeadOK) SetXFileLength(val int) {
+	s.XFileLength = val
 }
 
-// SetXContentType sets the value of XContentType.
-func (s *FileIDHeadOK) SetXContentType(val string) {
-	s.XContentType = val
+// SetXFileModified sets the value of XFileModified.
+func (s *FileIDHeadOK) SetXFileModified(val time.Time) {
+	s.XFileModified = val
+}
+
+// SetXFileType sets the value of XFileType.
+func (s *FileIDHeadOK) SetXFileType(val string) {
+	s.XFileType = val
 }
 
 func (*FileIDHeadOK) fileIDHeadRes() {}

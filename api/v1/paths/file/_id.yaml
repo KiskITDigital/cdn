@@ -38,17 +38,17 @@ head:
     '200':
       description: Successful response with file metadata
       headers:
-        X-Content-Type:
+        X-File-Type:
           required: true
           schema:
             type: string
           description: The media type of the file.
-        Content-Length:
+        X-File-Length:
           required: true
           schema:
             type: integer
           description: The size of the file in bytes.
-        Last-Modified:
+        X-File-Modified:
           required: true
           schema:
             type: string
