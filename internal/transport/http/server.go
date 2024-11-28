@@ -60,7 +60,7 @@ func newCORShandler() func(http.Handler) http.Handler {
 			"http://localhost:5173",
 			"http://localhost:3000",
 		},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"},
 		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
 	})
