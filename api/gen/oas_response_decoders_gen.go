@@ -69,10 +69,10 @@ func decodeFileIDGetResponse(resp *http.Response) (res FileIDGetRes, _ error) {
 					return res, errors.Wrap(err, "parse Content-Length header")
 				}
 			}
-			// Parse "Content-Modified" header.
+			// Parse "Last-Modified" header.
 			{
 				cfg := uri.HeaderParameterDecodingConfig{
-					Name:    "Content-Modified",
+					Name:    "Last-Modified",
 					Explode: false,
 				}
 				if err := func() error {
@@ -88,7 +88,7 @@ func decodeFileIDGetResponse(resp *http.Response) (res FileIDGetRes, _ error) {
 								return err
 							}
 
-							wrapper.ContentModified = c
+							wrapper.LastModified = c
 							return nil
 						}); err != nil {
 							return err
@@ -98,7 +98,7 @@ func decodeFileIDGetResponse(resp *http.Response) (res FileIDGetRes, _ error) {
 					}
 					return nil
 				}(); err != nil {
-					return res, errors.Wrap(err, "parse Content-Modified header")
+					return res, errors.Wrap(err, "parse Last-Modified header")
 				}
 			}
 			// Parse "X-File-Type" header.
@@ -221,10 +221,10 @@ func decodeFileIDHeadResponse(resp *http.Response) (res FileIDHeadRes, _ error) 
 				return res, errors.Wrap(err, "parse Content-Length header")
 			}
 		}
-		// Parse "Content-Modified" header.
+		// Parse "Last-Modified" header.
 		{
 			cfg := uri.HeaderParameterDecodingConfig{
-				Name:    "Content-Modified",
+				Name:    "Last-Modified",
 				Explode: false,
 			}
 			if err := func() error {
@@ -240,7 +240,7 @@ func decodeFileIDHeadResponse(resp *http.Response) (res FileIDHeadRes, _ error) 
 							return err
 						}
 
-						wrapper.ContentModified = c
+						wrapper.LastModified = c
 						return nil
 					}); err != nil {
 						return err
@@ -250,7 +250,7 @@ func decodeFileIDHeadResponse(resp *http.Response) (res FileIDHeadRes, _ error) 
 				}
 				return nil
 			}(); err != nil {
-				return res, errors.Wrap(err, "parse Content-Modified header")
+				return res, errors.Wrap(err, "parse Last-Modified header")
 			}
 		}
 		// Parse "X-File-Type" header.

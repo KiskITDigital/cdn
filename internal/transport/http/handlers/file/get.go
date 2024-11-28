@@ -32,9 +32,9 @@ func (h *Handler) FileIDGet(ctx context.Context, params api.FileIDGetParams) (ap
 
 	if !isPrivate {
 		return &api.FileIDGetOKHeaders{
-			ContentLength:   int(info.Size),
-			ContentModified: info.LastModified,
-			XFileType:       mime.TypeByExtension(ext),
+			ContentLength: int(info.Size),
+			LastModified:  info.LastModified,
+			XFileType:     mime.TypeByExtension(ext),
 			Response: api.FileIDGetOK{
 				Data: object,
 			},
@@ -56,9 +56,9 @@ func (h *Handler) FileIDGet(ctx context.Context, params api.FileIDGetParams) (ap
 	}
 
 	return &api.FileIDGetOKHeaders{
-		ContentLength:   int(info.Size),
-		ContentModified: info.LastModified,
-		XFileType:       mime.TypeByExtension(ext),
+		ContentLength: int(info.Size),
+		LastModified:  info.LastModified,
+		XFileType:     mime.TypeByExtension(ext),
 		Response: api.FileIDGetOK{
 			Data: object,
 		},
@@ -74,8 +74,8 @@ func (h *Handler) FileIDHead(ctx context.Context, params api.FileIDHeadParams) (
 	ext := filepath.Ext(info.Key)
 
 	return &api.FileIDHeadOK{
-		ContentLength:   int(info.Size),
-		ContentModified: info.LastModified,
-		XFileType:       mime.TypeByExtension(ext),
+		ContentLength: int(info.Size),
+		LastModified:  info.LastModified,
+		XFileType:     mime.TypeByExtension(ext),
 	}, nil
 }

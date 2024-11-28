@@ -76,7 +76,7 @@ paths:
               schema:
                 type: integer
               description: The size of the file in bytes.
-            Content-Modified:
+            Last-Modified:
               required: true
               schema:
                 type: string
@@ -116,7 +116,7 @@ paths:
               schema:
                 type: integer
               description: The size of the file in bytes.
-            Content-Modified:
+            Last-Modified:
               required: true
               schema:
                 type: string

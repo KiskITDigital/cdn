@@ -35,16 +35,16 @@ func encodeFileIDGetResponse(response FileIDGetRes, w http.ResponseWriter, span 
 					return errors.Wrap(err, "encode Content-Length header")
 				}
 			}
-			// Encode "Content-Modified" header.
+			// Encode "Last-Modified" header.
 			{
 				cfg := uri.HeaderParameterEncodingConfig{
-					Name:    "Content-Modified",
+					Name:    "Last-Modified",
 					Explode: false,
 				}
 				if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
-					return e.EncodeValue(conv.DateTimeToString(response.ContentModified))
+					return e.EncodeValue(conv.DateTimeToString(response.LastModified))
 				}); err != nil {
-					return errors.Wrap(err, "encode Content-Modified header")
+					return errors.Wrap(err, "encode Last-Modified header")
 				}
 			}
 			// Encode "X-File-Type" header.
@@ -118,16 +118,16 @@ func encodeFileIDHeadResponse(response FileIDHeadRes, w http.ResponseWriter, spa
 					return errors.Wrap(err, "encode Content-Length header")
 				}
 			}
-			// Encode "Content-Modified" header.
+			// Encode "Last-Modified" header.
 			{
 				cfg := uri.HeaderParameterEncodingConfig{
-					Name:    "Content-Modified",
+					Name:    "Last-Modified",
 					Explode: false,
 				}
 				if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
-					return e.EncodeValue(conv.DateTimeToString(response.ContentModified))
+					return e.EncodeValue(conv.DateTimeToString(response.LastModified))
 				}); err != nil {
-					return errors.Wrap(err, "encode Content-Modified header")
+					return errors.Wrap(err, "encode Last-Modified header")
 				}
 			}
 			// Encode "X-File-Type" header.
