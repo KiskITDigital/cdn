@@ -23,10 +23,6 @@ func (h *Handler) FileIDGet(ctx context.Context, params api.FileIDGetParams) (ap
 		return nil, cerr.Wrap(cerr.ErrNotFound, cerr.CodeNotFound, "file not found", nil)
 	}
 
-	defer object.Close()
-
-	fmt.Printf("%#v\n", info.UserMetadata)
-
 	isPrivate, err := strconv.ParseBool(info.UserMetadata[models.MetaPrivateKey])
 	if err != nil {
 		return nil, fmt.Errorf("convert private tag: %w", err)
