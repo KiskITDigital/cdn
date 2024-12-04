@@ -62,6 +62,7 @@ func newCORShandler() func(http.Handler) http.Handler {
 		},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"},
 		AllowedHeaders:   []string{"*"},
+		ExposedHeaders:   []string{"X-File-Type"},
 		AllowCredentials: true,
 	})
 }
